@@ -55,19 +55,50 @@ window.addEventListener("resize", () => {
   }
 });
 
+// Set minimum date (Hanya bisa pilih mulai besok)
+const today = new Date();
+const todayDate = new Date(
+  today.getFullYear(),
+  today.getMonth(),
+  today.getDate()
+); // Normalisasi ke 00:00:00 waktu lokal
+
+// Set tanggal minimum ke besok
+const tomorrow = new Date(todayDate);
+tomorrow.setDate(todayDate.getDate() + 1);
+
+// Format tanggal untuk input (YYYY-MM-DD)
+const formattedTomorrow = `${tomorrow.getFullYear()}-${String(
+  tomorrow.getMonth() + 1
+).padStart(2, "0")}-${String(tomorrow.getDate()).padStart(2, "0")}`;
+
+// Terapkan ke input date
+const bookingDate = document.getElementById("bookingDate");
+bookingDate.min = formattedTomorrow;
+
 // Form Submission to WhatsApp
-// Form validation
 document.getElementById("bookingForm").addEventListener("submit", function (e) {
   e.preventDefault();
 
-  // Date validation
+  // Clear error state
+  document.querySelectorAll(".form-group").forEach((group) => {
+    group.classList.remove("invalid");
+  });
+
+  // Validasi tanggal
   const selectedDate = new Date(bookingDate.value);
-  if (selectedDate < tomorrow) {
+  const selectedDateLocal = new Date(
+    selectedDate.getFullYear(),
+    selectedDate.getMonth(),
+    selectedDate.getDate()
+  );
+
+  if (selectedDateLocal < tomorrow) {
     bookingDate.parentElement.classList.add("invalid");
     return;
   }
 
-  // Phone number validation
+  // Validasi nomor telepon
   const phoneInput = this.querySelector('input[type="tel"]');
   if (!/^[0-9]{10,13}$/.test(phoneInput.value)) {
     phoneInput.parentElement.classList.add("invalid");
@@ -95,11 +126,3 @@ Nomor WhatsApp: ${formData.phone}`;
   )}`;
   window.open(whatsappUrl, "_blank");
 });
-
-// Set minimum date
-const today = new Date();
-const tomorrow = new Date(today);
-tomorrow.setDate(today.getDate() + 1);
-
-const bookingDate = document.getElementById("bookingDate");
-bookingDate.min = tomorrow.toISOString().split("T")[0];
