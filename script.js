@@ -125,7 +125,7 @@ Rute: ${formData.rute}
 Jumlah Penumpang: ${formData.penumpang}
 Nomor WhatsApp: ${formData.phone}`;
 
-  const whatsappUrl = `https://wa.me/6289516294021?text=${encodeURIComponent(
+  const whatsappUrl = `https://wa.me/6285274233345?text=${encodeURIComponent(
     message
   )}`;
   window.open(whatsappUrl, "_blank");
