@@ -7,12 +7,10 @@ hamburger.addEventListener("click", () => {
   navLinks.classList.toggle("active");
 });
 
-// Prevent closing saat klik menu
 navLinks.addEventListener("click", (e) => {
   e.stopPropagation();
 });
 
-// Close menu saat klik di luar
 document.addEventListener("click", (e) => {
   if (!hamburger.contains(e.target) && !navLinks.contains(e.target)) {
     hamburger.classList.remove("active");
@@ -20,7 +18,6 @@ document.addEventListener("click", (e) => {
   }
 });
 
-// Smooth scroll untuk nav link
 document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
   anchor.addEventListener("click", function (e) {
     e.preventDefault();
@@ -28,7 +25,6 @@ document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
       behavior: "smooth",
     });
 
-    // Close menu mobile setelah klik link
     if (navLinks.classList.contains("active")) {
       hamburger.classList.remove("active");
       navLinks.classList.remove("active");
@@ -47,7 +43,6 @@ document.querySelectorAll(".nav-links a").forEach((link) => {
   });
 });
 
-// Handle resize window
 window.addEventListener("resize", () => {
   if (window.innerWidth > 768) {
     navLinks.classList.remove("active");
@@ -55,66 +50,75 @@ window.addEventListener("resize", () => {
   }
 });
 
-// Set minimum date (Hanya bisa pilih mulai besok)
-const today = new Date();
-const todayDate = new Date(
-  today.getFullYear(),
-  today.getMonth(),
-  today.getDate()
-); // Normalisasi ke 00:00:00 waktu lokal
+// ... (kode hamburger menu tetap sama)
 
-// Set tanggal minimum ke besok
-const tomorrow = new Date(todayDate);
-tomorrow.setDate(todayDate.getDate() + 1);
+// ================== PENYESUAIAN WAKTU SUMATERA BARAT (UTC+7) ==================
+const getWIBDate = () => {
+  const now = new Date();
+  // Tambah offset UTC+7 dan normalisasi ke 00:00:00 WIB
+  const wibTime = now.getTime() + 7 * 60 * 60 * 1000;
+  return new Date(wibTime).setHours(0, 0, 0, 0);
+};
 
-// Format tanggal untuk input (YYYY-MM-DD)
-const formattedTomorrow = `${tomorrow.getFullYear()}-${String(
-  tomorrow.getMonth() + 1
-).padStart(2, "0")}-${String(tomorrow.getDate()).padStart(2, "0")}`;
+// Set tanggal minimum ke besok WIB
+const todayWIB = new Date(getWIBDate());
+const tomorrowWIB = new Date(todayWIB);
+tomorrowWIB.setDate(todayWIB.getDate() + 1);
+
+// Format tanggal untuk input
+const formatDate = (date) => {
+  return date.toISOString().slice(0, 10);
+};
 
 // Terapkan ke input date
 const bookingDate = document.getElementById("bookingDate");
-bookingDate.min = formattedTomorrow;
+bookingDate.min = formatDate(tomorrowWIB);
+bookingDate.value = formatDate(tomorrowWIB); // Set default value
 
-// Form Submission to WhatsApp
+// ================== VALIDASI FORM ==================
 document.getElementById("bookingForm").addEventListener("submit", function (e) {
   e.preventDefault();
 
-  // Clear error state
+  // Reset error state
   document.querySelectorAll(".form-group").forEach((group) => {
     group.classList.remove("invalid");
   });
 
   // Validasi tanggal
   const selectedDate = new Date(bookingDate.value);
-  const selectedDateLocal = new Date(
-    selectedDate.getFullYear(),
-    selectedDate.getMonth(),
-    selectedDate.getDate()
-  );
+  const selectedWIB = new Date(selectedDate.getTime() + 7 * 60 * 60 * 1000);
+  const selectedDateWIB = new Date(selectedWIB.setHours(0, 0, 0, 0));
 
-  if (selectedDateLocal < tomorrow) {
+  if (selectedDateWIB < tomorrowWIB) {
     bookingDate.parentElement.classList.add("invalid");
     return;
   }
 
-  // Validasi nomor telepon
+  // Validasi nomor HP
   const phoneInput = this.querySelector('input[type="tel"]');
   if (!/^[0-9]{10,13}$/.test(phoneInput.value)) {
     phoneInput.parentElement.classList.add("invalid");
     return;
   }
 
-  // Jika semua valid, kirim ke WhatsApp
+  // Format pesan WhatsApp
+  const formatter = new Intl.DateTimeFormat("id-ID", {
+    timeZone: "Asia/Jakarta",
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
   const formData = {
     nama: this.querySelector('input[type="text"]').value,
     phone: phoneInput.value,
-    date: bookingDate.value,
+    date: formatter.format(selectedDate),
     rute: this.querySelector("select").value,
     penumpang: this.querySelector('input[type="number"]').value,
   };
 
-  const message = `Halo NEW JM Travel, saya ingin memesan:\n
+  const message = `Halo NEW JM Travel, saya ingin memesan:
 Nama: ${formData.nama}
 Tanggal: ${formData.date}
 Rute: ${formData.rute}

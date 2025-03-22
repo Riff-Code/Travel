@@ -331,7 +331,7 @@ section {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 3rem;
-  align-items: stretch;
+  align-items: start;
   background: #f8f9fa;
   padding: 3rem;
   border-radius: 10px;
@@ -342,12 +342,12 @@ section {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 2rem;
+  gap: 1.5rem;
 }
 
 .contact-info > div {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 1.5rem;
   padding: 1.5rem;
   background: white;
@@ -364,8 +364,24 @@ section {
 .contact-icon {
   font-size: 1.8rem;
   color: #3498db;
-  min-width: 40px;
+  min-width: 50px;
   text-align: center;
+}
+
+.contact-info div div {
+  flex: 1;
+}
+
+.contact-info h4 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  color: #2c3e50;
+}
+
+.contact-info p {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #4a5568;
 }
 
 .map {
@@ -507,12 +523,15 @@ footer {
 
   .contact-container {
     grid-template-columns: 1fr;
+    gap: 2rem;
     padding: 2rem;
   }
 
   .contact-info > div {
     flex-direction: row;
     text-align: left;
+    padding: 1.2rem;
+    min-height: auto;
   }
 
   .map {
@@ -541,7 +560,7 @@ footer {
   }
 
   .hero-content {
-    flex-direction: column-reverse;
+    flex-direction: column;
     padding-top: 1rem;
   }
 
@@ -640,10 +659,20 @@ footer {
     flex-direction: column;
     text-align: center;
     padding: 1rem;
+    padding: 1.5rem 1rem;
   }
 
   .contact-icon {
+    font-size: 2rem;
     margin-bottom: 0.5rem;
+  }
+
+  .contact-info h4 {
+    font-size: 1rem;
+  }
+
+  .contact-info p {
+    font-size: 0.9rem;
   }
 }
 
